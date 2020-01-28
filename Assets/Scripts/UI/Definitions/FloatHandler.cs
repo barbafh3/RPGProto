@@ -1,32 +1,37 @@
 ﻿using UnityEngine;
 
-public class FloatHandler : MonoBehaviour
+namespace RpgProto
 {
 
-  [SerializeField]
-  private FloatVariable floatValue = null;
+    public class FloatHandler : MonoBehaviour
+    {
 
-  [SerializeField]
-  private float startingValue = 0f;
+        [SerializeField]
+        private FloatVariable floatValue = null;
 
-  [SerializeField]
-  private GameEvent changeValueEvent = null;
+        [SerializeField]
+        private float startingValue = 0f;
 
-  void Start()
-  {
-    floatValue.Value = startingValue;
-    changeValueEvent.Raise();
-  }
+        [SerializeField]
+        private GameEvent changeValueEvent = null;
 
-  public void RaiseValue(float amount)
-  {
-    floatValue.Value += amount;
-    changeValueEvent.Raise();
-  }
+        void Start()
+        {
+            floatValue.Value = startingValue;
+            changeValueEvent.Raise();
+        }
 
-  public void ReduceValue(float amount)
-  {
-    floatValue.Value -= amount;
-    changeValueEvent.Raise();
-  }
+        public void RaiseValue(float amount)
+        {
+            floatValue.Value += amount;
+            changeValueEvent.Raise();
+        }
+
+        public void ReduceValue(float amount)
+        {
+            floatValue.Value -= amount;
+            changeValueEvent.Raise();
+        }
+    }
+
 }

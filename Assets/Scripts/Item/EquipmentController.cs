@@ -11,12 +11,12 @@ public class EquipmentController : ItemController
       PickUp();
   }
 
-  public override void PickUp()
-  {
-    bool wasPickedUp = AddItem();
-    if (wasPickedUp)
-      Destroy(gameObject);
-  }
+  // public override void PickUp()
+  // {
+  //   bool wasPickedUp = AddItem();
+  //   if (wasPickedUp)
+  //     Destroy(gameObject);
+  // }
 
   public override bool AddItem()
   {

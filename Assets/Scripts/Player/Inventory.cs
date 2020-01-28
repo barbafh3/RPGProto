@@ -4,51 +4,60 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
 
-  [SerializeField]
-  InventoryList inventory = null;
+    [SerializeField]
+    InventoryList inventory = null;
 
-  [SerializeField]
-  InventoryList equipment = null;
+    [SerializeField]
+    InventoryList equipment = null;
 
-  public float inventorySize;
+    [SerializeField]
+    InventoryList craftList = null;
 
-  private int _equipmentSize = 3;
+    public float inventorySize;
 
-  void Start()
-  {
-    ClearInventory();
-    FillInventoryAndEquipment();
-  }
+    private int _equipmentSize = 3;
 
-  void Update()
-  {
-    if (Input.GetKeyDown(KeyCode.B))
+    private int _craftingSize = 2;
+
+    void Start()
     {
-      foreach (Stack<Item> stack in inventory.Items)
-      {
-        Debug.Log(stack);
-      }
-    }
-  }
-
-  private void ClearInventory()
-  {
-    for (int i = 0; i < inventory.Items.Count; i++)
-    {
-      inventory.Items[i] = null;
-    }
-  }
-
-  private void FillInventoryAndEquipment()
-  {
-    for (int i = 0; i < inventorySize; i++)
-    {
-      inventory.ForceAdd(null);
+        ClearInventory();
+        FillInventoryAndEquipment();
     }
 
-    for (int i = 0; i < _equipmentSize; i++)
+    void Update()
     {
-      equipment.ForceAdd(null);
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            foreach (Stack<Item> stack in inventory.Items)
+            {
+                Debug.Log(stack);
+            }
+        }
     }
-  }
+
+    private void ClearInventory()
+    {
+        for (int i = 0; i < inventory.Items.Count; i++)
+        {
+            inventory.Items[i] = null;
+        }
+    }
+
+    private void FillInventoryAndEquipment()
+    {
+        for (int i = 0; i < inventorySize; i++)
+        {
+            inventory.ForceAdd(null);
+        }
+
+        for (int i = 0; i < _equipmentSize; i++)
+        {
+            equipment.ForceAdd(null);
+        }
+        for (int i = 0; i < _craftingSize; i++)
+        {
+            craftList.ForceAdd(null);
+        }
+    }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Weapon Slot
   - Armor Slot
   - Helmet Slot
+  - Crafting Slot
   layers:
   - Default
   - TransparentFX

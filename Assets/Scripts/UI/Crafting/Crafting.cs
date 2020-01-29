@@ -1,133 +1,193 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Crafting : MonoBehaviour
 {
 
-  [SerializeField]
-  InventoryList inventory = null;
+    [SerializeField]
+    InventoryList inventory = null;
 
-  [SerializeField]
-  List<Slot> inventorySlots = null;
+    [SerializeField]
+    List<Slot> inventorySlots = null;
 
-  [SerializeField]
-  GameEvent stackedEvent = null;
+    [SerializeField]
+    GameEvent stackedEvent = null;
 
-  [SerializeField]
-  CraftSlot slot1 = null;
+    [SerializeField]
+    CraftingRecipe recipe = null;
 
-  [SerializeField]
-  CraftSlot slot2 = null;
+    [SerializeField]
+    TextMeshProUGUI stackText = null;
 
-  [SerializeField]
-  RecipeList list = null;
+    [SerializeField]
+    Button craftButton = null;
 
-  public void DoCraft()
-  {
-    CraftingRecipe recipe = CheckMaterials();
+    List<Stack<Item>> inventoryMaterials = null;
 
-    if (recipe != null)
+    List<Stack<CraftingMaterial>> recipeMaterials = null;
+
+    public float craftingAmount = 0;
+
+    void Awake()
     {
-      int material1Count = CountOcurrences(recipe, slot1.item);
-      int material2Count = CountOcurrences(recipe, slot2.item);
-      if (material1Count <= slot1.itemStack.Count && material2Count <= slot2.itemStack.Count)
-      {
-        for (int i = 0; i < material1Count; i++)
+        recipeMaterials = new List<Stack<CraftingMaterial>>();
+        LoadRecipeMaterials();
+    }
+
+    void Update()
+    {
+        inventoryMaterials = GetInventoryMaterials();
+        if (recipeMaterials != null)
+            craftingAmount = GetCraftAmount();
+        stackText.text = craftingAmount.ToString();
+        if (craftingAmount == 0)
         {
-          slot1.itemStack.Pop();
+            craftButton.interactable = false;
+            stackText.enabled = false;
         }
-        for (int i = 0; i < material2Count; i++)
+        else
         {
-          slot2.itemStack.Pop();
+            craftButton.interactable = true;
+            stackText.enabled = true;
         }
-
-        CraftItem(recipe);
-
-        if (slot2.itemStack.Count < 1)
-          slot2.RemoveItem();
-        if (slot1.itemStack.Count < 1)
-          slot1.RemoveItem();
-      }
-      else
-      {
-        Debug.Log("Not enough materials");
-      }
-
     }
-    else
+
+    void LoadRecipeMaterials()
     {
-      Debug.Log("No Recipe Found");
+        foreach (CraftingMaterial material in recipe.materialList)
+        {
+            var materials = recipe.materialList.FindAll(m => m == material);
+            Stack<CraftingMaterial> stack = new Stack<CraftingMaterial>();
+            for (int i = 0; i < materials.Count; i++)
+            {
+                stack.Push(material);
+            }
+            if (stack != null)
+                recipeMaterials.Add(stack);
+        }
     }
-  }
 
-  private void CraftItem(CraftingRecipe recipe)
-  {
-    List<int> availableSlots = CheckAvailableSlots();
-    if (availableSlots.Count >= 3)
+    public void DoCraft()
     {
-      Stack<Item> stack = new Stack<Item>();
-      stack.Push(recipe.craftedItem);
-      AddItemToSlot(availableSlots[0], stack);
-      inventory.AddAt(availableSlots[0], stack);
-
-      inventory.itemEvent.Raise();
-      stackedEvent.Raise();
+        if (craftingAmount > 0)
+            CraftItem(recipe);
     }
-    else
+
+    float GetCraftAmount()
     {
-      Debug.Log("Not enough open slots");
-    }
-  }
+        float lowestCount = Mathf.Infinity;
+        List<float> materialCount = new List<float>();
+        foreach (Stack<CraftingMaterial> material in recipeMaterials)
+        {
+            foreach (Stack<Item> stack in inventoryMaterials)
+            {
+                float count = Mathf.Infinity;
+                if (stack.Peek() == material.Peek())
+                {
+                    count = stack.Count / material.Count;
+                    if (count < lowestCount) lowestCount = count;
+                    materialCount.Add(count);
+                }
 
-  void AddItemToSlot(int index, Stack<Item> stack)
-  {
-    foreach (Slot slot in inventorySlots)
+            }
+        }
+        if (materialCount.Count == recipeMaterials.Count)
+        {
+            if (lowestCount == Mathf.Infinity)
+            {
+                return 0f;
+            }
+            else
+            {
+                return lowestCount;
+            }
+        }
+        else
+        {
+            return 0f;
+        }
+    }
+
+    List<Stack<Item>> GetInventoryMaterials()
     {
-      if (slot.itemIndex == index)
-        slot.AddItem(stack);
+        List<Stack<Item>> list = new List<Stack<Item>>();
+        foreach (Stack<Item> stack in inventory.Items)
+        {
+            if (stack != null && stack.Count > 0 && stack.Peek() is CraftingMaterial) list.Add(stack);
+        }
+        return list;
     }
-  }
 
-  int CountOcurrences(CraftingRecipe recipe, Item item)
-  {
-    int count = 0;
-    foreach (Item i in recipe.materialList)
+    private void CraftItem(CraftingRecipe recipe)
     {
-      if (i == item)
-        count++;
+        List<int> availableSlots = CheckAvailableSlots();
+        if (availableSlots.Count >= 3)
+        {
+            Stack<Item> stack = new Stack<Item>();
+            stack.Push(recipe.craftedItem);
+            AddItemToSlot(availableSlots[0], stack);
+            inventory.AddAt(availableSlots[0], stack);
+
+            SpendMaterials();
+
+            inventory.itemEvent.Raise();
+            stackedEvent.Raise();
+        }
+        else
+        {
+            Debug.Log("Not enough open slots");
+        }
     }
-    return count;
-  }
 
-  CraftingRecipe CheckMaterials()
-  {
-    bool containsMaterial1 = false;
-    bool containsMaterial2 = false;
-    CraftingRecipe foundRecipe = null;
-
-    foreach (CraftingRecipe recipe in list.recipesList)
+    void SpendMaterials()
     {
-      containsMaterial1 = recipe.materialList.Contains(slot1.item);
-      containsMaterial2 = recipe.materialList.Contains(slot2.item);
-
-      if (containsMaterial1 && containsMaterial2)
-      {
-        foundRecipe = recipe;
-      }
+        foreach (Stack<CraftingMaterial> stack in recipeMaterials)
+        {
+            for (var i = 0; i < inventoryMaterials.Count; i++)
+            {
+                if (inventoryMaterials[i] != null && inventoryMaterials[i].Peek() == stack.Peek())
+                {
+                    inventoryMaterials[i].Pop();
+                    if (inventoryMaterials[i].Count == 0)
+                    {
+                        inventoryMaterials[i] = null;
+                    }
+                }
+            }
+        }
     }
 
-    return foundRecipe;
-  }
-
-  public List<int> CheckAvailableSlots()
-  {
-    var available = new List<int>();
-    for (int i = 0; i <= inventory.Items.Count - 1; i++)
+    void AddItemToSlot(int index, Stack<Item> stack)
     {
-      if (inventory.Items[i] == null) available.Add(i);
+        foreach (Slot slot in inventorySlots)
+        {
+            if (slot.itemIndex == index)
+                slot.AddItem(stack);
+        }
     }
-    return available;
-  }
+
+    int CountOcurrences(CraftingRecipe recipe, Item item)
+    {
+        int count = 0;
+        foreach (Item i in recipe.materialList)
+        {
+            if (i == item)
+                count++;
+        }
+        return count;
+    }
+
+    public List<int> CheckAvailableSlots()
+    {
+        var available = new List<int>();
+        for (int i = 0; i <= inventory.Items.Count - 1; i++)
+        {
+            if (inventory.Items[i] == null) available.Add(i);
+        }
+        return available;
+    }
 
 }

@@ -55,7 +55,7 @@ public class InventoryUI : MonoBehaviour
   {
     for (int i = 0; i < slots.Count; i++)
     {
-      if (inventory.Items[i] != null)
+      if (inventory.Items[i] != null && inventory.Items[i].Count != 0)
         slots[i].AddItem(inventory.Items[i]);
     }
   }

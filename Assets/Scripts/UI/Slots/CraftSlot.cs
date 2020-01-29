@@ -15,6 +15,15 @@ public class CraftSlot : Slot
         }
     }
 
+    public override void RemoveItem()
+    {
+        craftList.SetNullAt(itemIndex);
+        ClearSlot();
+        if (stackEvent != null)
+            stackEvent.Raise();
+        itemList.itemEvent.Raise();
+    }
+
     public override void SwapItems(Slot callingSlot)
     {
         var localItemStack = itemStack;

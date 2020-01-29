@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 200, y: -50}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1498668207586604134
 CanvasRenderer:
@@ -274,7 +274,7 @@ RectTransform:
   m_GameObject: {fileID: 8032449411600525878}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children:
   - {fileID: 9110244512289822712}
   m_Father: {fileID: 0}
@@ -379,6 +379,7 @@ MonoBehaviour:
   inventory: {fileID: 0}
   inventorySlots: []
   stackedEvent: {fileID: 0}
-  slot1: {fileID: 0}
-  slot2: {fileID: 0}
-  list: {fileID: 0}
+  recipe: {fileID: 0}
+  stackText: {fileID: 0}
+  craftButton: {fileID: 0}
+  craftingAmount: 0

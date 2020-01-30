@@ -258,6 +258,7 @@ GameObject:
   - component: {fileID: 6462966357027121343}
   - component: {fileID: 6654364040978568626}
   - component: {fileID: 1721581787214836489}
+  - component: {fileID: 9203566253743833158}
   m_Layer: 5
   m_Name: SpecificCraftSlot
   m_TagString: Untagged
@@ -383,3 +384,20 @@ MonoBehaviour:
   stackText: {fileID: 0}
   craftButton: {fileID: 0}
   craftingAmount: 0
+--- !u!114 &9203566253743833158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032449411600525878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53ffca07f44f8f87b1ac16222a7b5d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  craftItemInfo: {fileID: 0}
+  item: {fileID: 0}
+  recipe: {fileID: 0}
+  materialPrefab: {fileID: 5989856907511886030, guid: 8bc4acb44e83be015b6e4aeca5428d5a,
+    type: 3}
